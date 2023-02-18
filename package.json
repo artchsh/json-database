@@ -1,0 +1,27 @@
+{
+  "name": "@artchsh/json-database",
+  "version": "0.0.2",
+  "description": "database based on json. get, edit, add and remove!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "json",
+    "base",
+    "db",
+    "database",
+    "simple",
+    "offile",
+    "nosql"
+  ],
+  "author": "artchsh",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  },
+  "types": "./index.d.ts"
+}
