@@ -4,7 +4,8 @@
   "description": "database based on json. get, edit, add and remove!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc"
   },
   "keywords": [
     "json",
@@ -23,5 +24,13 @@
   "devDependencies": {
     "typescript": "^4.9.5"
   },
-  "types": "./index.d.ts"
+  "types": "./index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artchsh/json-database.git"
+  },
+  "bugs": {
+    "url": "https://github.com/artchsh/json-database/issues"
+  },
+  "homepage": "https://github.com/artchsh/json-database#readme"
 }

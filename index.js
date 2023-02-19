@@ -1,6 +1,5 @@
 const { randomUUID } = require('crypto')
 const fs = require('fs')
-const path = require('path')
 
 class Database {
     /**
@@ -9,9 +8,9 @@ class Database {
      */
     constructor(name) {
         if (typeof name !== typeof '') {
-            throw TypeError('Name of database is not string')
+            throw new TypeError('Name of database is not string')
         }
-        this.dbPath = `${name}.json` //path.resolve(__dirname, `${name}.json`)
+        this.dbPath = `${name}.json`
     }
 
     #read() {
@@ -20,13 +19,7 @@ class Database {
 
     #write(data) {
         fs.writeFile(this.dbPath, JSON.stringify(data), (err) => {
-            if (err)
-                console.log(err)
-            else {
-                console.log("File written successfully\n")
-                console.log("The written has the following contents:")
-                console.log(this.#read())
-            }
+            if (err) throw new Error(err)
         })
     }
 
@@ -42,14 +35,14 @@ class Database {
             this.#write(DB)
             return value
         } else {
-            throw TypeError('Value to add is not a type of object.')
+            throw new TypeError('Value to add is not a type of object.')
         }
     }
 
     /**
      * Method, that removes document with specific id
      * @param {string} id
-     * @returns {Array} changed entire database
+     * @returns {Array} changed database
      */
     remove(id) {
         const DB = JSON.parse(this.#read())
@@ -78,16 +71,36 @@ class Database {
                 return data
             }
             catch {
-                throw Error('Something went wrong. Open new issue on github')
+                throw new Error('Something went wrong. Please, if you are still getting error, open new issue on github.')
             }
         }
     }
 
     /**
+     * Method, that searches for specified object
+     * @param {string} id Search for an object with this id
+     * @returns {object}
+     */
+    findById(id) {
+        if (typeof id !== typeof '') {
+            throw new TypeError('ID is not a type of string.')
+        }
+        const data = this.get()
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].id === id) {
+                return data[i]
+            }
+        }
+        return {}
+    }
+
+    /**
      * Method, that clears database (danger)
+     * @returns {array} cleared database
      */
     clear() {
         this.#write([])
+        return this.#read()
     }
 }
 

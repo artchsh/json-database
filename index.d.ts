@@ -14,7 +14,7 @@ declare class Database {
     /**
      * Method, that removes document with specific id
      * @param {string} id
-     * @returns {Array} changed entire database
+     * @returns {Array} changed database
      */
     remove(id: string): any[];
     /**
@@ -23,8 +23,15 @@ declare class Database {
      */
     get(): any[];
     /**
-     * Method, that clears database (danger)
+     * Method, that searches for specified object
+     * @param {string} id Search for an object with this id
+     * @returns {object}
      */
-    clear(): void;
+    findById(id: string): object;
+    /**
+     * Method, that clears database (danger)
+     * @returns {array} cleared database
+     */
+    clear(): any[];
 }
 //# sourceMappingURL=index.d.ts.map
