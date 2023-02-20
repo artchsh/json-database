@@ -1,6 +1,6 @@
 {
   "name": "@artchsh/json-database",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "database based on json. get, edit, add and remove!",
   "main": "index.js",
   "scripts": {
