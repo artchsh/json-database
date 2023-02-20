@@ -19,6 +19,7 @@
   "author": "artchsh",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^18.14.0",
     "typescript": "^4.9.5"
   },
   "types": "./index.d.ts",

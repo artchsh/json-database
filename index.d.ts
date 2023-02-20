@@ -1,27 +1,31 @@
-export = Database;
+declare const randomUUID: any;
+declare const fs: any;
 declare class Database {
+    #private;
+    dbPath: string;
     /**
      * Create a database.
      * @param {string} name - The name of the database
      */
     constructor(name: string);
-    dbPath: string;
     /**
      * @param {object} value
      * @returns {object} with id, that was added
      */
-    add(value: object): object;
+    add(value: {
+        [key: string]: any;
+    }): object;
     /**
      * Method, that removes document with specific id
      * @param {string} id
-     * @returns {Array} changed database
+     * @returns {object[]} changed database
      */
-    removeById(id: string): any[];
+    removeById(id: string): object[];
     /**
      * Method, that gets entire database
-     * @returns {array}
+     * @returns {object[]}
      */
-    get(): any[];
+    get(): object[];
     /**
      * Method, that searches for specified object
      * @param {string} id Search for an object with this id
@@ -36,9 +40,8 @@ declare class Database {
     findOne(query: object): object;
     /**
      * Method, that clears database (danger)
-     * @returns {array} cleared database
+     * @returns {object[]} cleared database
      */
-    clear(): any[];
-    #private;
+    clear(): object[];
 }
 //# sourceMappingURL=index.d.ts.map

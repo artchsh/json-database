@@ -5,8 +5,8 @@ const JsonDatabase = require('@artchsh/json-database');
 const db = new JsonDatabase('shop');
 
 // you can create several databases as you need
-const users = new JsonDatabase('users')d
-const servers = new JsonDatabase('servers')
+const users = new JsonDatabase('users');
+const servers = new JsonDatabase('servers');
 ```
 Get entire database:
 ```js
