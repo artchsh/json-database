@@ -29,6 +29,12 @@ declare class Database {
      */
     findById(id: string): object;
     /**
+     * Method, that searches for an object with that specific key and its value. If found nothing, then returns empty object
+     * @param {object} query
+     * @returns {object}
+     */
+    findOne(query: object): object;
+    /**
      * Method, that clears database (danger)
      * @returns {array} cleared database
      */
