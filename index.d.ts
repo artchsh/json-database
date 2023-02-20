@@ -16,7 +16,7 @@ declare class Database {
      * @param {string} id
      * @returns {Array} changed database
      */
-    remove(id: string): any[];
+    removeById(id: string): any[];
     /**
      * Method, that gets entire database
      * @returns {array}
@@ -33,5 +33,6 @@ declare class Database {
      * @returns {array} cleared database
      */
     clear(): any[];
+    #private;
 }
 //# sourceMappingURL=index.d.ts.map
