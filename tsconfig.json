@@ -17,13 +17,13 @@
     // Types should go into this directory.
     // Removing this would place the .d.ts files
     // next to the .js files
-    "outDir": "",
+    "outDir": "dist",
     // go to js file when using IDE functions like
     // "Go to Definition" in VSCode
     "declarationMap": true,
     "removeComments": true,
     "target": "es6",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
   }
 }
