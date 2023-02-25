@@ -30,6 +30,5 @@
   "bugs": {
     "url": "https://github.com/artchsh/json-database/issues"
   },
-  "files": ["/dist"],
   "homepage": "https://github.com/artchsh/json-database#readme"
 }
