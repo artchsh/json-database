@@ -8,11 +8,14 @@
 
 <p align="center">
   <a href="https://github.com/artchsh/json-database/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Json-Database is released under the MIT license." />
+    <img alt="GitHub" src="https://img.shields.io/github/license/artchsh/json-database?style=for-the-badge" alt="License">
   </a>
   <a href="https://www.npmjs.com/package/@artchsh/json-database">
-    <img src="https://img.shields.io/npm/v/@artchsh/json-database?color=brightgreen&label=npm%20package" alt="Current npm package version." />
+    <img src="https://img.shields.io/npm/v/@artchsh/json-database?style=for-the-badge" alt="Current npm package version." />
   </a>
+  
+  <img src="https://img.shields.io/github/last-commit/artchsh/json-database?style=for-the-badge" alt="Latest commit." />
+  <img src="https://img.shields.io/npm/dw/@artchsh/json-database?style=for-the-badge" alt="Downloads per week." />
 </p>
 
 > I don't recommend using this package for large or medium sized projects because it's an insecure nor unstable database type.
