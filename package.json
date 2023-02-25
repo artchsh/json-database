@@ -2,7 +2,7 @@
   "name": "@artchsh/json-database",
   "version": "0.3.1",
   "description": "database based on json. get, edit, add and remove!",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
     "compile": "tsc"

@@ -20,6 +20,11 @@ class Database {
         }
         this.dbPath = `${name}.json`;
     }
+    /**
+     * @param {objectEx} value
+     * @param {cbFunc} cb
+     * @returns {object}
+     */
     add(value, cb = defaultCallback) {
         if (typeof value === typeof {}) {
             const DB = this.get();
@@ -34,6 +39,11 @@ class Database {
             throw new TypeError('Value to add is not a type of object.');
         }
     }
+    /**
+     * @param {string} id
+     * @param {cbFunc} cb
+     * @returns {unknown | object[]}
+     */
     removeById(id, cb = defaultCallback) {
         const DB = this.get();
         let newDB = [];
@@ -60,6 +70,11 @@ class Database {
             }
         });
     }
+    /**
+     *
+     * @param {cbFunc} cb
+     * @returns {unknown | object}
+     */
     get(cb = defaultCallback) {
         try {
             const data = __classPrivateFieldGet(this, _Database_instances, "m", _Database_read).call(this);
@@ -78,6 +93,11 @@ class Database {
             }
         }
     }
+    /**
+     * @param {string} id
+     * @param {cbFunc} cb
+     * @returns {object | null}
+     */
     findById(id, cb) {
         if (typeof id !== typeof '') {
             cb('ID is not a type of string.', null);
@@ -93,6 +113,11 @@ class Database {
         cb(null, null);
         return null;
     }
+    /**
+     * @param {object} query
+     * @param {cbFunc} cb
+     * @returns {object | null}
+     */
     findOne(query, cb = defaultCallback) {
         if (typeof query !== typeof {}) {
             cb('Query is not type of object', null);
@@ -109,6 +134,12 @@ class Database {
         cb(null, null);
         return null;
     }
+    /**
+     * @param {object} query
+     * @param {object} edit
+     * @param {cbFunc} cb
+     * @returns {object[] | unknown}
+     */
     findOneAndEdit(query, edit, cb = defaultCallback) {
         try {
             let newDB = [];
@@ -137,6 +168,10 @@ class Database {
             return error;
         }
     }
+    /**
+     * @param {cbFunc} cb
+     * @returns {object[] | unknown}
+     */
     clear(cb = defaultCallback) {
         try {
             __classPrivateFieldGet(this, _Database_instances, "m", _Database_write).call(this, []);
@@ -155,6 +190,7 @@ _Database_instances = new WeakSet(), _Database_read = function _Database_read() 
     return JSON.parse(data);
 }, _Database_write = function _Database_write(data) {
     this.get();
+    // @ts-ignore
     fs.writeFile(this.dbPath, JSON.stringify(data), (err) => {
         if (err)
             throw new Error(err);

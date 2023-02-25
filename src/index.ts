@@ -24,6 +24,9 @@ class Database {
     return JSON.parse(data)
   }
 
+  /**
+   * @param {object} data
+   */
   #write(data: object) {
     this.get()
     // @ts-ignore
@@ -32,6 +35,17 @@ class Database {
     })
   }
 
+  /**
+   * @name cbFunc
+   * @function
+   * @param {any} error
+   * @param {object[] | object | null} docs
+   */
+  /**
+   * @param {objectEx} value
+   * @param {cbFunc} cb
+   * @returns {object}
+   */
   add(value: objectEx, cb: cbFunc = defaultCallback) {
     if (typeof value === typeof {}) {
       const DB = this.get()
@@ -46,6 +60,11 @@ class Database {
     }
   }
 
+  /**
+   * @param {string} id
+   * @param {cbFunc} cb
+   * @returns {unknown | object[]}
+   */
   removeById(id: string, cb: cbFunc = defaultCallback) {
     const DB: objectEx[] = this.get()
     let newDB: object[] = []
@@ -71,6 +90,11 @@ class Database {
     })
   }
 
+  /**
+   *
+   * @param {cbFunc} cb
+   * @returns {unknown | object}
+   */
   get(cb: cbFunc = defaultCallback) {
     try {
       const data = this.#read()
@@ -88,10 +112,12 @@ class Database {
     }
   }
 
-  findById(
-    id: string,
-    cb: cbFunc
-  ) {
+  /**
+   * @param {string} id
+   * @param {cbFunc} cb
+   * @returns {object | null}
+   */
+  findById(id: string, cb: cbFunc) {
     if (typeof id !== typeof '') {
       cb('ID is not a type of string.', null)
       throw new Error('ID is not a type of string.')
@@ -107,6 +133,11 @@ class Database {
     return null
   }
 
+  /**
+   * @param {object} query
+   * @param {cbFunc} cb
+   * @returns {object | null}
+   */
   findOne(query: object, cb: cbFunc = defaultCallback) {
     if (typeof query !== typeof {}) {
       cb('Query is not type of object', null)
@@ -124,6 +155,12 @@ class Database {
     return null
   }
 
+  /**
+   * @param {object} query
+   * @param {object} edit
+   * @param {cbFunc} cb
+   * @returns {object[] | unknown}
+   */
   findOneAndEdit(query: object, edit: object, cb: cbFunc = defaultCallback) {
     try {
       let newDB: object[] = []
@@ -152,6 +189,10 @@ class Database {
     }
   }
 
+  /**
+   * @param {cbFunc} cb
+   * @returns {object[] | unknown}
+   */
   clear(cb: cbFunc = defaultCallback) {
     try {
       this.#write([])
