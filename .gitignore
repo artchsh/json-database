@@ -128,3 +128,6 @@ dist
 
 package-lock.json
 .npmignore
+index.d.ts.map
+index.d.ts
+index.js

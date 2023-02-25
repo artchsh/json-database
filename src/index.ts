@@ -1,12 +1,17 @@
 const { randomUUID } = require('crypto')
 const fs = require('fs')
 
+type cbFunc = (error: unknown, docs: object | object[] | null) => void
+type objectEx = { [key: string]: any }
+
+const defaultCallback: cbFunc = (error, docs) => {
+  if (error) {
+    console.error(error)
+  }
+}
+
 class Database {
   dbPath: string
-  /**
-   * Create a database.
-   * @param {string} name - The name of the database
-   */
   constructor(name: string) {
     if (typeof name !== typeof '') {
       throw new TypeError('Name of database is not string')
@@ -21,110 +26,142 @@ class Database {
 
   #write(data: object) {
     this.get()
+    // @ts-ignore
     fs.writeFile(this.dbPath, JSON.stringify(data), (err) => {
       if (err) throw new Error(err)
     })
   }
 
-  /**
-   * @param {object} value
-   * @returns {object} with id, that was added
-   */
-  add(value: {[key: string]: any}): object {
+  add(value: objectEx, cb: cbFunc = defaultCallback) {
     if (typeof value === typeof {}) {
       const DB = this.get()
       value.id = randomUUID()
       DB.push(value)
       this.#write(DB)
+      cb(null, value)
       return value
     } else {
+      cb('Value to add is not a type of object.', null)
       throw new TypeError('Value to add is not a type of object.')
     }
   }
 
-  /**
-   * Method, that removes document with specific id
-   * @param {string} id
-   * @returns {object[]} changed database
-   */
-  removeById(id: string): object[] {
-    const DB: {[key: string]: any}[] = this.get()
+  removeById(id: string, cb: cbFunc = defaultCallback) {
+    const DB: objectEx[] = this.get()
     let newDB: object[] = []
     for (let i = 0; i < DB.length; i++) {
       if (DB[i].id !== id) {
         newDB.push(DB[i])
       }
     }
-    this.#write(newDB)
-    return this.get()
+    try {
+      this.#write(newDB)
+    } catch (error) {
+      cb(error, null)
+      return error
+    }
+    this.get((err, docs) => {
+      if (!err) {
+        cb(null, docs)
+        return docs
+      } else {
+        cb(err, null)
+        return err
+      }
+    })
   }
 
-  /**
-   * Method, that gets entire database
-   * @returns {object[]}
-   */
-  get(): object[] {
+  get(cb: cbFunc = defaultCallback) {
     try {
       const data = this.#read()
+      cb(null, data)
       return data
-    } catch {
+    } catch (error) {
       try {
         const data = fs.writeFileSync(this.dbPath, '[]')
+        cb(null, data)
         return data
-      } catch {
-        throw new Error(
-          'Something went wrong. Please, if you are still getting error, open new issue on github.'
-        )
+      } catch (error) {
+        cb(error, null)
+        return error
       }
     }
   }
 
-  /**
-   * Method, that searches for specified object
-   * @param {string} id Search for an object with this id
-   * @returns {object}
-   */
-  findById(id: string): object {
+  findById(
+    id: string,
+    cb: cbFunc
+  ) {
     if (typeof id !== typeof '') {
-      throw new TypeError('ID is not a type of string.')
+      cb('ID is not a type of string.', null)
+      throw new Error('ID is not a type of string.')
     }
-    const data: {[key: string]: any}[] = this.get()
+    const data: objectEx[] = this.get()
     for (let i = 0; i < data.length; i++) {
       if (data[i].id === id) {
+        cb(null, data[i])
         return data[i]
       }
     }
-    return {}
+    cb(null, null)
+    return null
   }
 
-  /**
-   * Method, that searches for an object with that specific key and its value. If found nothing, then returns empty object
-   * @param {object} query 
-   * @returns {object}
-   */
-  findOne(query: object): object {
+  findOne(query: object, cb: cbFunc = defaultCallback) {
     if (typeof query !== typeof {}) {
-      throw new TypeError('Key is not type of object')
+      cb('Query is not type of object', null)
     }
-    const object2Array = JSON.stringify(query).split('{')[1].split('}')[0].split(':')
-    const key = object2Array[0].split('"')[1]
-    const value = object2Array[1].split('"')[1]
+    const key = Object.entries(query)[0][0]
+    const value = Object.entries(query)[0][1]
     const data = this.get()
     for (let i = 0; i < data.length; i++) {
       if (data[i][key] == value) {
+        cb(null, data[i])
         return data[i]
       }
     }
-    return {}
+    cb(null, null)
+    return null
   }
 
-  /**
-   * Method, that clears database (danger)
-   * @returns {object[]} cleared database
-   */
-  clear(): object[] {
-    this.#write([])
-    return this.#read()
+  findOneAndEdit(query: object, edit: object, cb: cbFunc = defaultCallback) {
+    try {
+      let newDB: object[] = []
+      const data: objectEx[] = this.get()
+      const foundedDoc: objectEx = this.findOne(query)
+      for (let i = 0; i < data.length; i++) {
+        const doc: objectEx = data[i]
+        if (foundedDoc !== null) {
+          if (foundedDoc.id === doc.id) {
+            const editArray = Object.entries(edit)[0]
+            const key = editArray[0]
+            const value = editArray[1]
+            foundedDoc[key] = value
+            newDB.push(foundedDoc)
+          }
+        }
+        newDB.push(doc)
+      }
+      this.#write(newDB)
+      const docs = this.get()
+      cb(null, docs)
+      return docs
+    } catch (error) {
+      cb(error, null)
+      return error
+    }
+  }
+
+  clear(cb: cbFunc = defaultCallback) {
+    try {
+      this.#write([])
+      const docs = this.#read()
+      cb(null, docs)
+      return docs
+    } catch (error) {
+      cb(error, null)
+      return error
+    }
   }
 }
 
