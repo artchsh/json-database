@@ -10,6 +10,12 @@ declare class Database {
     dbPath: string;
     constructor(name: string);
     /**
+     * @name cbFunc
+     * @function
+     * @param {any} error
+     * @param {object[] | object | null} docs
+     */
+    /**
      * @param {objectEx} value
      * @param {cbFunc} cb
      * @returns {object}

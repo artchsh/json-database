@@ -21,6 +21,12 @@ class Database {
         this.dbPath = `${name}.json`;
     }
     /**
+     * @name cbFunc
+     * @function
+     * @param {any} error
+     * @param {object[] | object | null} docs
+     */
+    /**
      * @param {objectEx} value
      * @param {cbFunc} cb
      * @returns {object}
