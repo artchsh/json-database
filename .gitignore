@@ -6,4 +6,3 @@ node_modules/
 .npm
 package-lock.json
 .npmignore
-dist/
