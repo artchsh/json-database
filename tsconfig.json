@@ -24,6 +24,6 @@
     "removeComments": false,
     "target": "es6",
     "strict": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   }
 }

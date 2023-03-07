@@ -1,60 +1,54 @@
-declare const randomUUID: any;
-declare const fs: any;
 type cbFunc = (error: unknown, docs: object | object[] | null) => void;
 type objectEx = {
     [key: string]: any;
 };
-declare const defaultCallback: cbFunc;
-declare class Database {
+declare class JsonDatabase {
     #private;
     dbPath: string;
-    constructor(name: string);
-    /**
-     * @name cbFunc
-     * @function
-     * @param {any} error
-     * @param {object[] | object | null} docs
-     */
+    tableName: string;
+    constructor(name: string, table?: string);
     /**
      * @param {objectEx} value
      * @param {cbFunc} cb
      * @returns {object}
      */
-    add(value: objectEx, cb?: cbFunc): objectEx;
+    add(value: objectEx, cb?: cbFunc): unknown[];
     /**
      * @param {string} id
      * @param {cbFunc} cb
      * @returns {unknown | object[]}
      */
-    removeById(id: string, cb?: cbFunc): unknown;
+    removeById(id: string, cb?: cbFunc): unknown[] | undefined;
     /**
-     *
      * @param {cbFunc} cb
      * @returns {unknown | object}
      */
-    get(cb?: cbFunc): any;
+    all(cb?: cbFunc): [unknown | null, objectEx | null];
+    getCurrentTable(cb?: cbFunc): [unknown | null, objectEx[] | null];
     /**
      * @param {string} id
      * @param {cbFunc} cb
      * @returns {object | null}
      */
-    findById(id: string, cb: cbFunc): objectEx | null;
+    findById(id: string, cb?: cbFunc): unknown[];
     /**
      * @param {object} query
      * @param {cbFunc} cb
      * @returns {object | null}
      */
-    findOne(query: object, cb?: cbFunc): any;
+    findOne(query: object, cb?: cbFunc): unknown[];
     /**
      * @param {object} query
      * @param {object} edit
      * @param {cbFunc} cb
      * @returns {object[] | unknown}
      */
-    findOneAndEdit(query: object, edit: object, cb?: cbFunc): any;
+    findOneAndEdit(query: object, edit: object, cb?: cbFunc): unknown[];
     /**
      * @param {cbFunc} cb
      * @returns {object[] | unknown}
      */
-    clear(cb?: cbFunc): any;
+    clear(cb?: cbFunc): unknown[];
 }
+export { JsonDatabase };
+//# sourceMappingURL=index.d.ts.map

@@ -4,7 +4,9 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Database_instances, _Database_read, _Database_write;
+var _JsonDatabase_instances, _JsonDatabase_read, _JsonDatabase_write, _JsonDatabase_writeCurrentTable, _JsonDatabase_isTableExists;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JsonDatabase = void 0;
 const { randomUUID } = require('crypto');
 const fs = require('fs');
 const defaultCallback = (error, docs) => {
@@ -12,37 +14,38 @@ const defaultCallback = (error, docs) => {
         console.error(error);
     }
 };
-class Database {
-    constructor(name) {
-        _Database_instances.add(this);
+class JsonDatabase {
+    constructor(name, table = 'default') {
+        _JsonDatabase_instances.add(this);
         if (typeof name !== typeof '') {
-            throw new TypeError('Name of database is not string');
+            throw new TypeError('Name of database or Table is not string');
         }
         this.dbPath = `${name}.json`;
+        this.tableName = table;
     }
-    /**
-     * @name cbFunc
-     * @function
-     * @param {any} error
-     * @param {object[] | object | null} docs
-     */
     /**
      * @param {objectEx} value
      * @param {cbFunc} cb
      * @returns {object}
      */
     add(value, cb = defaultCallback) {
-        if (typeof value === typeof {}) {
-            const DB = this.get();
-            value.id = randomUUID();
-            DB.push(value);
-            __classPrivateFieldGet(this, _Database_instances, "m", _Database_write).call(this, DB);
-            cb(null, value);
-            return value;
+        try {
+            if (typeof value === typeof {}) {
+                const [err, DB] = this.getCurrentTable();
+                value.id = randomUUID();
+                DB.push(value);
+                __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_write).call(this, DB);
+                cb(null, value);
+                return [null, value];
+            }
+            else {
+                cb('Value to add is not a type of object.', null);
+                throw new TypeError('Value to add is not a type of object.');
+            }
         }
-        else {
-            cb('Value to add is not a type of object.', null);
-            throw new TypeError('Value to add is not a type of object.');
+        catch (error) {
+            cb(error, null);
+            return [error, null];
         }
     }
     /**
@@ -51,7 +54,7 @@ class Database {
      * @returns {unknown | object[]}
      */
     removeById(id, cb = defaultCallback) {
-        const DB = this.get();
+        const [err, DB] = this.get();
         let newDB = [];
         for (let i = 0; i < DB.length; i++) {
             if (DB[i].id !== id) {
@@ -59,16 +62,16 @@ class Database {
             }
         }
         try {
-            __classPrivateFieldGet(this, _Database_instances, "m", _Database_write).call(this, newDB);
+            __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_write).call(this, newDB);
         }
         catch (error) {
             cb(error, null);
-            return error;
+            return [error, null];
         }
         this.get((err, docs) => {
             if (!err) {
                 cb(null, docs);
-                return docs;
+                return [null, docs];
             }
             else {
                 cb(err, null);
@@ -77,26 +80,43 @@ class Database {
         });
     }
     /**
-     *
      * @param {cbFunc} cb
      * @returns {unknown | object}
      */
-    get(cb = defaultCallback) {
+    all(cb = defaultCallback) {
         try {
-            const data = __classPrivateFieldGet(this, _Database_instances, "m", _Database_read).call(this);
+            const data = __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_read).call(this);
             cb(null, data);
-            return data;
+            return [null, data];
         }
         catch (error) {
             try {
-                const data = fs.writeFileSync(this.dbPath, '[]');
+                fs.writeFileSync(this.dbPath, '{}');
+                const [err, data] = this.all();
                 cb(null, data);
-                return data;
+                return [null, data];
             }
             catch (error) {
                 cb(error, null);
-                return error;
+                return [error, null];
             }
+        }
+    }
+    getCurrentTable(cb = defaultCallback) {
+        try {
+            const [err, data] = this.all();
+            if (__classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_isTableExists).call(this, data)) {
+                Object.defineProperty(data, this.tableName, {
+                    value: [],
+                    writable: true
+                });
+            }
+            cb(null, data[this.tableName]);
+            return [null, data[this.tableName]];
+        }
+        catch (error) {
+            cb(error, null);
+            return [error, null];
         }
     }
     /**
@@ -104,20 +124,26 @@ class Database {
      * @param {cbFunc} cb
      * @returns {object | null}
      */
-    findById(id, cb) {
-        if (typeof id !== typeof '') {
-            cb('ID is not a type of string.', null);
-            throw new Error('ID is not a type of string.');
-        }
-        const data = this.get();
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].id === id) {
-                cb(null, data[i]);
-                return data[i];
+    findById(id, cb = defaultCallback) {
+        try {
+            if (typeof id !== typeof '') {
+                cb('ID is not a type of string.', null);
+                throw new Error('ID is not a type of string.');
             }
+            const [error, data] = this.get();
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id === id) {
+                    cb(null, data[i]);
+                    return [null, data[i]];
+                }
+            }
+            cb('Nothing found', null);
+            return ['Nothing found', null];
         }
-        cb(null, null);
-        return null;
+        catch (error) {
+            cb(error, null);
+            return [error, null];
+        }
     }
     /**
      * @param {object} query
@@ -125,20 +151,26 @@ class Database {
      * @returns {object | null}
      */
     findOne(query, cb = defaultCallback) {
-        if (typeof query !== typeof {}) {
-            cb('Query is not type of object', null);
-        }
-        const key = Object.entries(query)[0][0];
-        const value = Object.entries(query)[0][1];
-        const data = this.get();
-        for (let i = 0; i < data.length; i++) {
-            if (data[i][key] == value) {
-                cb(null, data[i]);
-                return data[i];
+        try {
+            if (typeof query !== typeof {}) {
+                cb('Query is not type of object', null);
             }
+            const key = Object.entries(query)[0][0];
+            const value = Object.entries(query)[0][1];
+            const [error, data] = this.get();
+            for (let i = 0; i < data.length; i++) {
+                if (data[i][key] == value) {
+                    cb(null, data[i]);
+                    return [null, data[i]];
+                }
+            }
+            cb('Nothing found', null);
+            return ['Nothing found', null];
         }
-        cb(null, null);
-        return null;
+        catch (error) {
+            cb(error, null);
+            return [error, null];
+        }
     }
     /**
      * @param {object} query
@@ -149,7 +181,7 @@ class Database {
     findOneAndEdit(query, edit, cb = defaultCallback) {
         try {
             let newDB = [];
-            const data = this.get();
+            const [error, data] = this.get();
             const foundedDoc = this.findOne(query);
             for (let i = 0; i < data.length; i++) {
                 const doc = data[i];
@@ -164,14 +196,14 @@ class Database {
                 }
                 newDB.push(doc);
             }
-            __classPrivateFieldGet(this, _Database_instances, "m", _Database_write).call(this, newDB);
-            const docs = this.get();
+            __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_write).call(this, newDB);
+            const [err, docs] = this.get();
             cb(null, docs);
-            return docs;
+            return [null, docs];
         }
         catch (error) {
             cb(error, null);
-            return error;
+            return [error, null];
         }
     }
     /**
@@ -180,26 +212,38 @@ class Database {
      */
     clear(cb = defaultCallback) {
         try {
-            __classPrivateFieldGet(this, _Database_instances, "m", _Database_write).call(this, []);
-            const docs = __classPrivateFieldGet(this, _Database_instances, "m", _Database_read).call(this);
-            cb(null, docs);
-            return docs;
+            __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_write).call(this, {});
+            const data = __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_read).call(this);
+            cb(null, data);
+            return [null, data];
         }
         catch (error) {
             cb(error, null);
-            return error;
+            return [error, null];
         }
     }
 }
-_Database_instances = new WeakSet(), _Database_read = function _Database_read() {
+exports.JsonDatabase = JsonDatabase;
+_JsonDatabase_instances = new WeakSet(), _JsonDatabase_read = function _JsonDatabase_read() {
     const data = fs.readFileSync(this.dbPath, 'utf8');
     return JSON.parse(data);
-}, _Database_write = function _Database_write(data) {
-    this.get();
+}, _JsonDatabase_write = function _JsonDatabase_write(data) {
     // @ts-ignore
     fs.writeFile(this.dbPath, JSON.stringify(data), (err) => {
         if (err)
             throw new Error(err);
     });
+}, _JsonDatabase_writeCurrentTable = function _JsonDatabase_writeCurrentTable(data) {
+    const [error1, db] = this.all();
+    db ? [this.tableName] = data
+        :
+    ;
+    __classPrivateFieldGet(this, _JsonDatabase_instances, "m", _JsonDatabase_write).call(this, db);
+}, _JsonDatabase_isTableExists = function _JsonDatabase_isTableExists(data) {
+    for (let dataOne of Object.entries(data)) {
+        if (dataOne.includes(this.tableName)) {
+            return true;
+        }
+    }
+    return false;
 };
-module.exports = Database;
