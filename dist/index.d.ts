@@ -21,22 +21,22 @@ declare class JsonDatabase {
     removeById(id: string, cb?: cbFunc): unknown[] | undefined;
     /**
      * @param {cbFunc} cb
-     * @returns {unknown | object}
+     * @returns {object}
      */
-    all(cb?: cbFunc): [unknown | null, objectEx | null];
-    getCurrentTable(cb?: cbFunc): [unknown | null, objectEx[] | null];
+    get(cb?: cbFunc): [any | null, objectEx | null];
+    getCurrentTable(cb?: cbFunc): [null | any, null | objectEx[]];
     /**
      * @param {string} id
      * @param {cbFunc} cb
      * @returns {object | null}
      */
-    findById(id: string, cb?: cbFunc): unknown[];
+    findById(id: string, cb?: cbFunc): [null | any, null | objectEx];
     /**
      * @param {object} query
      * @param {cbFunc} cb
      * @returns {object | null}
      */
-    findOne(query: object, cb?: cbFunc): unknown[];
+    findOne(query: object, cb?: cbFunc): [null | any, null | objectEx];
     /**
      * @param {object} query
      * @param {object} edit
@@ -48,7 +48,7 @@ declare class JsonDatabase {
      * @param {cbFunc} cb
      * @returns {object[] | unknown}
      */
-    clear(cb?: cbFunc): unknown[];
+    clear(cb?: cbFunc): void;
 }
 export { JsonDatabase };
 //# sourceMappingURL=index.d.ts.map

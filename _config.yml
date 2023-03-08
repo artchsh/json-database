@@ -12,4 +12,7 @@ include:
   - CODE_OF_CONDUCT.md
   - ISSUE_TEMPLATE.md
   - PULL_REQUEST_TEMPLATE.md
-remote_theme: pages-themes/midnight@v0.2.0
+remote_theme: pages-themes/merlot@v0.2.0
+show_downloads: true
+title: Json-Database
+description: Json-Database is an npm package for creating NoSQL JSON databases offline, allowing developers to store and retrieve data locally with ease.
