@@ -15,7 +15,7 @@ function makeId(length) {
 }
 
 // Variables setup
-const db_name = `${makeId(10)}-test`
+const db_name = `${makeId(10)}-cjs-test`
 const db = new JsonDatabase(db_name)
 let objFmDb
 
