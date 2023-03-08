@@ -1,6 +1,6 @@
 {
   "name": "@artchsh/json-database",
-  "version": "0.3.2-0",
+  "version": "0.4.0",
   "description": "Json-Database is an npm package for creating NoSQL JSON databases offline, allowing developers to store and retrieve data locally with ease.",
   "main": "dist/index.js",
   "scripts": {
