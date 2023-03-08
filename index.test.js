@@ -1,30 +1,34 @@
+// Import our package directly
 const { JsonDatabase } = require('./dist/index.js')
 
+// Function to make different db each time tests run
 function makeId(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
+    let result = ''
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const charactersLength = characters.length
+    let counter = 0
     while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      counter += 1
     }
-    return result;
+    return result
 }
 
-const db = new JsonDatabase(`${makeId(10)}-test`)
+// Variables setup
+const db_name = `${makeId(10)}-test`
+const db = new JsonDatabase(db_name)
 let objFmDb
 
-test('get database', () => {
-    const result = db.get()
-    if(result[0]) {
-        console.error(result[0])
-    }
-    expect(result[1]).toStrictEqual([])
-    expect(result[0]).toBeNull()  
+// Tests
+test('Get data out of json database', () => {
+    const [error, data] = db.get()
+    expect(data).toStrictEqual({
+        default: []
+    })
+    expect(error).toBeNull()  
 })
 
-test('add new item to database', () => {
+test('Add new document to database', () => {
     const [error, data] = db.add({ value: 123 })
     objFmDb = data
     expect(data).not.toBeNull()
@@ -32,8 +36,25 @@ test('add new item to database', () => {
     expect(error).toBeNull()
 })
 
-test('find item by id', () => {
+test('Find specific document with given id in database', () => {
     const [error, data] = db.findById(objFmDb.id)
-    expect(data).toBe(objFmDb)
+    expect(data).toStrictEqual(objFmDb)
+    expect(error).toBeNull()
+})
+
+test('Find specific document with given query in database', () => {
+    const [error, data] = db.findOne({ value: 123 })
+    expect(data).toStrictEqual(objFmDb)
+    expect(error).toBeNull()
+})
+
+test('Find specific document with given query in database, edit it and write it to database', () => {
+    const [error, data] = db.findOneAndEdit({ value: 123 }, { value: 234 })
+    let [keys, values] = [Object.keys(data), Object.values(data)]
+    for (let key in keys) {
+        if (key == 'value') {
+            expect(values[keys.indexOf(key)]).toBe(234)
+        }
+    }
     expect(error).toBeNull()
 })

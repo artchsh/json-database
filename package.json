@@ -1,11 +1,10 @@
 {
   "name": "@artchsh/json-database",
   "version": "0.3.2-0",
-  "description": "database based on json. get, edit, add and remove!",
+  "description": "Json-Database is an npm package for creating NoSQL JSON databases offline, allowing developers to store and retrieve data locally with ease.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "tsc && jest",
-    "compile": "tsc"
+    "test": "tsc && jest"
   },
   "keywords": [
     "json",
@@ -19,11 +18,11 @@
   "author": "artchsh",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.14.0",
+    "@types/node": "^18.14.6",
     "jest": "^29.4.3",
     "typescript": "^4.9.5"
   },
-  "types": "./index.d.ts",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/artchsh/json-database.git"
@@ -34,5 +33,5 @@
   "files": [
     "/dist"
   ],
-  "homepage": "https://github.com/artchsh/json-database#readme"
+  "homepage": "https://artchsh.github.io/json-database"
 }
